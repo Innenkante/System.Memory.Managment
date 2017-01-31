@@ -55,7 +55,9 @@ namespace System.Memory.Managment
     public class Pointer<T> : MemoryBase
     {
         private static readonly Dictionary<Type, object> Handler = new Dictionary<Type, object>();
+
         public static IntPtr ProcessHandle;
+
         static Pointer()
         {
             Handler.Add(typeof(string), new StringHandler());
@@ -67,9 +69,15 @@ namespace System.Memory.Managment
             Handler.Add(typeof(char), new CharHandler());
         }
 
-        public Pointer(uint address,int size = 4)
+        public Pointer(ulong address,int size = 4)
         {
             Address = (IntPtr)address;
+            Size = size;
+        }
+
+        public Pointer(IntPtr address,int size = 4)
+        {
+            Address = address;
             Size = size;
         }
 
@@ -97,6 +105,19 @@ namespace System.Memory.Managment
             }
             Write(Pointer<object>.ProcessHandle, Address, buffer);
         }
+
+        public static Pointer<T> operator + (Pointer<T> p1,Pointer<T> p2) => 
+            new Pointer<T>((ulong)p1.Address + (ulong)p2.Address);
+
+        public static Pointer<T> operator -(Pointer<T> p1, Pointer<T> p2) =>
+            new Pointer<T>((ulong)p1.Address - (ulong)p2.Address);
+
+        public static Pointer<T> operator *(Pointer<T> p1, Pointer<T> p2) =>
+            new Pointer<T>((ulong)p1.Address * (ulong)p2.Address);
+
+        public static Pointer<T> operator /(Pointer<T> p1, Pointer<T> p2) =>
+            new Pointer<T>((ulong)p1.Address / (ulong)p2.Address);
+
     }
 
     class StringHandler : HandlerBase<string>

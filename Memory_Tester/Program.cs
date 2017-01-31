@@ -12,11 +12,6 @@ namespace Memory_Tester
     {   
         static void Main(string[] args)
         {
-
-            Pointer<object>.ProcessHandle = HackProcess.GetProcessHandle("iw5mp");
-            Pointer<int> p1 = new Pointer<int>(0xDEADBEEF, 4);
-            Console.WriteLine(p1.ReadValue());
-            p1.SetValue(0);
             Console.ReadKey();
         }
     }
