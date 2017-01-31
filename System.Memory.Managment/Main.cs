@@ -218,13 +218,13 @@ namespace System.Memory.Managment
             try
             {
                 Process[] ProcList = Process.GetProcessesByName(processname);
-                if(ProcList.Count() == 0)
+                if (ProcList.Count() == 0)
                     throw new Exception("No process found");
                 return ProcList.First().Handle;
             }
             catch (Exception e)
             {
-                throw new Exception("Exception in getting the process handle: "+ e.Message);
+                throw new Exception("Exception in getting the process handle: " + e.Message);
             }
         }
     }
