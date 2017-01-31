@@ -16,7 +16,7 @@ namespace System.Memory.Managment
         [DllImport("kernel32.dll")]
         protected static extern Int32 WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [In, Out] byte[] buffer, UInt32 size, out IntPtr lpNumberOfBytesWritten);
 
-        protected byte[] Read(IntPtr handle,IntPtr address,int length)
+        protected byte[] ReadInternal(IntPtr handle,IntPtr address,int length)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace System.Memory.Managment
             }
         }
 
-        protected void Write(IntPtr handle,IntPtr address,byte[] value)
+        protected void WriteInternal(IntPtr handle,IntPtr address,byte[] value)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace System.Memory.Managment
 
     public class Pointer<T> : MemoryBase
     {
-        private static readonly Dictionary<Type, object> Handler = new Dictionary<Type, object>();
+        public static Dictionary<Type, object> Handler = new Dictionary<Type, object>();
 
         public static IntPtr ProcessHandle;
 
@@ -69,16 +69,20 @@ namespace System.Memory.Managment
             Handler.Add(typeof(char), new CharHandler());
         }
 
-        public Pointer(ulong address,int size = 4)
+        public Pointer(ulong _address)
         {
-            Address = (IntPtr)address;
-            Size = size;
+            Address = (IntPtr)_address;
+        }
+        public Pointer(ulong _address,int _size = 4)
+        {
+            Address = (IntPtr)_address;
+            Size = _size;
         }
 
-        public Pointer(IntPtr address,int size = 4)
+        public Pointer(IntPtr _address,int _size = 4)
         {
-            Address = address;
-            Size = size;
+            Address = _address;
+            Size = _size;
         }
 
         public IntPtr Address;
@@ -103,7 +107,7 @@ namespace System.Memory.Managment
             {
                 buffer[i] = 0x90;
             }
-            Write(Pointer<object>.ProcessHandle, Address, buffer);
+            WriteInternal(Pointer<object>.ProcessHandle, Address, buffer);
         }
 
         public static Pointer<T> operator + (Pointer<T> p1,Pointer<T> p2) => 
@@ -124,12 +128,12 @@ namespace System.Memory.Managment
     {
         public override string Read(Pointer<string> pointer)
         {
-            return new ASCIIEncoding().GetString(Read(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size));
+            return new ASCIIEncoding().GetString(ReadInternal(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size));
         }
 
         public override void Write(Pointer<string> pointer,string value)
         {
-            Write(Pointer<object>.ProcessHandle, pointer.Address, new ASCIIEncoding().GetBytes(value));
+            WriteInternal(Pointer<object>.ProcessHandle, pointer.Address, new ASCIIEncoding().GetBytes(value));
         }
     }
 
@@ -137,12 +141,12 @@ namespace System.Memory.Managment
     {
         public override int Read(Pointer<int> pointer)
         {
-            return BitConverter.ToInt32(Read(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size),0);
+            return BitConverter.ToInt32(ReadInternal(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size),0);
         }
 
         public override void Write(Pointer<int> pointer, int value)
         {
-            Write(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
+            WriteInternal(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
         }
     }
 
@@ -150,12 +154,12 @@ namespace System.Memory.Managment
     {
         public override float Read(Pointer<float> pointer)
         {
-            return BitConverter.ToSingle(Read(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
+            return BitConverter.ToSingle(ReadInternal(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
         }
 
         public override void Write(Pointer<float> pointer, float value)
         {
-            Write(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
+            WriteInternal(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
         }
     }
 
@@ -163,12 +167,12 @@ namespace System.Memory.Managment
     {
         public override double Read(Pointer<double> pointer)
         {
-            return BitConverter.ToDouble(Read(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
+            return BitConverter.ToDouble(ReadInternal(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
         }
 
         public override void Write(Pointer<double> pointer, double value)
         {
-            Write(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
+            WriteInternal(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
         }
     }
 
@@ -176,12 +180,12 @@ namespace System.Memory.Managment
     {
         public override long Read(Pointer<long> pointer)
         {
-            return BitConverter.ToInt64(Read(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
+            return BitConverter.ToInt64(ReadInternal(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
         }
 
         public override void Write(Pointer<long> pointer, long value)
         {
-            Write(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
+            WriteInternal(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
         }
     }
 
@@ -189,12 +193,12 @@ namespace System.Memory.Managment
     {
         public override byte[] Read(Pointer<byte[]> pointer)
         {
-            return Read(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size);
+            return ReadInternal(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size);
         }
 
         public override void Write(Pointer<byte[]> pointer, byte[] value)
         {
-            Write(Pointer<object>.ProcessHandle, pointer.Address, value);
+            WriteInternal(Pointer<object>.ProcessHandle, pointer.Address, value);
         }
     }
 
@@ -202,12 +206,12 @@ namespace System.Memory.Managment
     {
         public override char Read(Pointer<char> pointer)
         {
-            return BitConverter.ToChar(Read(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
+            return BitConverter.ToChar(ReadInternal(Pointer<object>.ProcessHandle, pointer.Address, pointer.Size), 0);
         }
 
         public override void Write(Pointer<char> pointer, char value)
         {
-            Write(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
+            WriteInternal(Pointer<object>.ProcessHandle, pointer.Address, BitConverter.GetBytes(value));
         }
     }
 

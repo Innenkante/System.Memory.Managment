@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Memory.Managment", "System.Memory.Managment\System.Memory.Managment.csproj", "{CE824BCE-656C-4F04-82AC-FA50E9294705}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memory_Tester", "Memory_Tester\Memory_Tester.csproj", "{A56952AF-93A9-4360-AFB1-E04411F30D20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Memory_Tester\Example.csproj", "{A56952AF-93A9-4360-AFB1-E04411F30D20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,6 +8,36 @@ using System.Diagnostics;
 
 namespace Memory_Tester
 {
+    ///Example of using the abstract base to add a new datatype 
+    class Vector //Our custom type
+    {
+        public Vector(float _x, float _y, float _z)
+        {
+            x = _x;
+            y = _y;
+            z = _z;
+        }
+
+        public float x;
+        public float y;
+        public float z;
+    }
+
+    class VectorHandler : HandlerBase<Vector> //Our custom handler
+    {
+        public override Vector Read(Pointer<Vector> pointer)
+        {
+            return new Vector(new Pointer<float>(pointer.Address).ReadValue(),new Pointer<float>(pointer.Address + 4).ReadValue(),new Pointer<float>(pointer.Address + 8).ReadValue());
+        }
+
+        public override void Write(Pointer<Vector> pointer, Vector value)
+        {
+            new Pointer<float>(pointer.Address).SetValue(value.x);
+            new Pointer<float>(pointer.Address + 4).SetValue(value.y);
+            new Pointer<float>(pointer.Address + 8).SetValue(value.z);
+        }
+    }
+
     class Program
     {   
         static void Main(string[] args)
@@ -20,6 +50,11 @@ namespace Memory_Tester
             p1.SetValue(100); //Writes the certain value to the Pointer
             p2.ReadValue(); //Reads the certain value of the pointer in the size of 16 chars
             p3.SetNOP(16); //Sets 0x90 aka no executable code to the adress range -> size
+
+            Pointer<object>.Handler.Add(typeof(Vector), new VectorHandler()); //Adding our handler for our custom type to the dictionary
+            Pointer<Vector> p4 = new Pointer<Vector>(0xDEADBAAF); //Making an instance of the pointer object with our custom type
+            p4.ReadValue(); 
+            p4.SetValue(new Vector(0, 0, 0)); 
             Console.ReadKey();
         }
     }
